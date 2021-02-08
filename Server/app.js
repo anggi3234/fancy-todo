@@ -14,12 +14,12 @@ app.use(express.urlencoded({extended: true}))
 
 app.use('/', router)
 
-// app.use(errorHandlers)
+app.use(errorHandlers)
 
 app.listen(port, (err, res) => {
   if(err) {
     console.log(err)
   } else {
-    console.log(`listening on port ${port}`)
+    console.log(`App is running on http://localhost/${port}`)
   }
 })

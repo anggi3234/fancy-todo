@@ -1,4 +1,4 @@
-const { TODO } = require('../models/')
+const { Todo } = require('../models/')
 const axios = require('axios');
 
 class todoController {
@@ -9,7 +9,7 @@ class todoController {
       status: req.body.status,
       due_date: req.body.due_date
     }
-    TODO.create(newtask)
+    Todo.create(newtask)
     .then(data => {
       res.status(201).json(data)
     })
@@ -19,8 +19,9 @@ class todoController {
   }
 
   static getTodo(req, res) {
-    TODO.findAll({where: {userId: req.decoded.id}})
+    Todo.findAll({where: {UserId: req.decoded.id}})
     .then(todo => {
+      console.log(todo, "THIS IS THE TODO")
       res.status(200).json(todo)
     })
     .catch(err => {
@@ -30,7 +31,7 @@ class todoController {
     })
   }
   static findTodo(req, res) {
-    TODO.findByPk(req.params.id)
+    Todo.findByPk(req.params.id)
     .then(todo => {
       if(!todo) {
         res.status(404).json({
@@ -52,7 +53,7 @@ class todoController {
       due_date: req.body.due_date
     }
 
-    TODO.update(editTodo, {
+    Todo.update(editTodo, {
       where: {
         id: +req.params.id
       },
@@ -71,7 +72,7 @@ class todoController {
     })
   }
   static updateStatus(req, res) {
-    TODO.update({status: req.body.status}, {
+    Todo.update({status: req.body.status}, {
       where: {
         id: +req.params.id
       }, returning: true
@@ -92,7 +93,7 @@ class todoController {
     })
   }
   static deleteTodo(req, res) {
-    TODO.destroy({where:{id: +req.params.id}})
+    Todo.destroy({where:{id: +req.params.id}})
     .then(todo => {
       if(!todo) {
         res.status(404).json({msg: "Error not found"})

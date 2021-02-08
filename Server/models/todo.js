@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class TODO extends Model {
+  class Todo extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,26 +11,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      TODO.belongsTo(models.User, {foreignKey: 'userId'})
+      Todo.belongsTo(models.User)
     }
   };
-  TODO.init({
+  Todo.init({
     title: {
       type: DataTypes.STRING,
-      allowNull: false,
       validate: {
-        notNull: {
-          msg: 'Nama task tidak boleh kosong'
+        notEmpty: {
+          args: true,
+          masg: "Todo list must have a title"
         }
       }
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false,
       validate: {
-        notNull: {
+        notEmpty: {
           args: true,
-          msg: 'Nama task tidak boleh kosong'
+          masg: "Todo list must have a description"
         }
       }
     },
@@ -39,34 +38,31 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           args: true,
-          masg: "Status tidak boleh kosong"
+          msg: "Todo list must have a status"
         },
         isIn: {
           args: [["Not Started", "In Progress", "Completed"]],
-          msg: `Input harus antara "Not Started", "In Progress", atau "Completed"`
+          masg: `Status must be between "Not Started" OR "In Progress" OR "Completed"`
         }
       }
     },
     due_date: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
       validate: {
-        isAfter: { //custom validation compare date now
+        isAfter: {
           args: new Date().toDateString(),
-          msg: "Tanggal harus lebih dari hari ini"
+          msg: "Date must be after the current date"
         },
-        notNull: {
+        notEmpty: {
           args: true,
-          msg: "Tanggal tidak boleh kosong"
+          msg: "Date must not be empty"
         }
       }
     },
-    userId: {
-      type: DataTypes.INTEGER
-    }
+    UserId: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'TODO',
+    modelName: 'Todo',
   });
-  return TODO;
+  return Todo;
 };

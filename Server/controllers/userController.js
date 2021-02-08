@@ -23,27 +23,28 @@ class userController {
   }
 
   static login(req, res, next) {
-    const {email, password} = req.body
+    let newLogin = {
+      email: req.body.email,
+      password: req.body.password
+    }
     User.findOne({where:{
-      email
+      email: req.body.email
     }})
     .then(user => {
       console.log(user)
-      if(!user) throw { msg: "User not found"}
-      const comparePass = comparePassword(password, user.password)
-      if(!comparePass)
-      throw {
-        name: "customError",
-        msg: "Invalid email or password",
-        status: 400
-      }
+      let comparePass = comparePassword(newLogin.password, user.password)
+      if(comparePass) {
+        // console.log("MASUK KE ACCESS TOKEN")
 
-      const token_key = generateToken({
-        id: user.id,
-        email: user.email
-      })
-      console.log(token_key)
-      res.status(200).json({token_key})
+        const access_token = generateToken({
+          id: user.id,
+          email: user.email
+        })
+        // console.log(access_token, "THIS IS ACCESSTOKEN")
+        res.status(200).json({access_token})
+      } else {
+        res.status(404).json({msg: "User not found"})
+      }
     })
     .catch(err =>{
       console.log(err)
@@ -71,8 +72,8 @@ class userController {
           id: user.id,
           email: user.email
         }
-        const token_key = generateToken(payload)
-        res.status(200).json({token_key})
+        const access_token = generateToken(payload)
+        res.status(200).json({access_token})
       } else {
         return User.create({email, password})
         .then(user => {
@@ -80,8 +81,8 @@ class userController {
             id: user.id,
             email: user.email
           }
-          const token_key = generateToken(payload)
-          res.status(200).json({token_key})
+          const access_token = generateToken(payload)
+          res.status(200).json({access_token})
         })
       }
     })

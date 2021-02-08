@@ -1,26 +1,32 @@
-const {TODO} = require("../models/")
+const {Todo} = require("../models")
 
 const authorize = function(req, res, next) {
-  let todoId = +req.params.id
-
-  TODO.findOne({
+  let UserId = req.decoded.id
+  console.log(UserId, "THIS IS THE USER ID")
+  Todo.findOne({
     where: {
-      id: todoId
+      UserId
     }
   })
   .then(todo => {
-    // console.log(todo, "THIS TO DO IS INSIDE AUTHORIZE")
-    if(!todo) {
-      res.status(404).json({ msg: "User ID not found"})
-    }
-    if(todo.userId === req.decoded.id) {
+    console.log(todo, "THIS TO DO IS INSIDE AUTHORIZE")
+
+    if(todo) {
       next()
+    } else if(!todo) {
+      res.status(404).json({ msg: "Todo list is empty"})
     } else {
       const error = err.msg || "Unauthorized user access"
       res.status(500).json({error})
     }
+    if(!todo) {
+      res.status(404).json({ msg: "Todo list is empty"})
+    } else {
+      next()
+    }
   })
   .catch(err => {
+    console.log(err)
     next(err)
   })
 }

@@ -14,30 +14,32 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.hasMany(models.TODO, { foreignKey: 'userId' });
+      User.hasMany(models.Todo)
     }
   };
   User.init({
     email: {
       type: DataTypes.STRING,
-      isUnique: true,
-      notNull: true,
       validate: {
-        isEmail: true
-      }
+        isEmail: {
+          args: true,
+          msg: "Invalide email address"
+        }
+      },
+      unique: true
     },
     password: {
       type: DataTypes.STRING,
       validate: {
         len: {
-          args: 7,
-          msg: "Password minimal 7 karakter"
+          args: 5,
+          msg: "Password should be at least be 5 characters long"
         }
       }
-    },
+    }
   }, {
     hooks: {
-      beforeCreate: (user, option) => {
+      beforeCreate: (user, options) => {
         user.password = hashPassword(user.password)
       }
     },

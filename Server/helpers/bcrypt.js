@@ -6,6 +6,7 @@ function hashPassword(password) {
 }
 
 function comparePassword(password, userpasswords) {
+  // console.log("INSIDE BCRYPT")
   return bcrypt.compareSync(password, userpasswords)
 }
 
